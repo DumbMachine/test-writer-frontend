@@ -1,0 +1,28 @@
+.article {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+    align-items: center; */
+}
+.insideComp {
+  /* width: 100px;
+  height: 200px; */
+  background-color: aquamarine;
+}
+.buttonGrp {
+  display: flex;
+  flex-direction: row;
+  padding-top: 50px;
+}
+.articleComponents {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.article_searchBar {
+  padding-bottom: 150px;
+}
+.insideComp {
+  padding-bottom: 200px;
+}
