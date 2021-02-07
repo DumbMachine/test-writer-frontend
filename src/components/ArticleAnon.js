@@ -10,11 +10,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
+import axios from "axios";
+
 import InputLabel from "@material-ui/core/InputLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
-import apiInformation from "./test.json";
+import apiData from "./test.json";
 
 import "./Article.css";
 
@@ -28,8 +30,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fetchJson = async () => {
+  await axios
+    .post("http://127.0.0.1:8000/token", {
+      index: 1,
+      name: "serach the things",
+    })
+    .then((response) => {
+      // console.log(response.data.data)
+      return response.data.data;
+    })
+    .catch((response) => {
+      console.error(response);
+    });
+};
+
 function TranslatedText(props) {
   const [hover, setHover] = React.useState(false);
+
+  const thisSitePointChunks = window.location.href.split("/");
+  const thisEndPoint = thisSitePointChunks[thisSitePointChunks.length - 1];
 
   return (
     <React.Fragment>
@@ -38,20 +58,19 @@ function TranslatedText(props) {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{
-          backgroundColor: "lightblue",
-          padding: "1px",
-          borderColor: "red",
+          backgroundColor: "#A5D6A7",
+          padding: "2px",
+          borderRadius: "6px",
         }}
       >
-        <u>{props.token[props.defLanguage]}</u>
-        {/* <span>{" "}</span> */}
+        {props.token[props.defLanguage]}
         {hover && (
           <React.Fragment>
             <span
               style={{
-                backgroundColor: "lightgreen",
-                padding: "1px",
-                borderColor: "red",
+                backgroundColor: "#80DEEA",
+                padding: "2px",
+                borderRadius: "6px",
               }}
             >
               {" "}
@@ -67,6 +86,7 @@ function TranslatedText(props) {
 
 function Article() {
   const [lang, setLang] = React.useState(1);
+  const [apiData, setApiData] = React.useState([]);
   const [level, setLevel] = React.useState(0);
   const [text, setText] = React.useState([]);
   const LEVELS = [
@@ -107,67 +127,70 @@ function Article() {
     },
   ];
 
-  const updateText = (thisLevel, thisLangIndex) => {
+  const updateText = (thisData, thisLevel, thisLangIndex) => {
     const newText = [];
-    apiInformation.forEach((sentence) => {
-      const someText = [];
-      if (sentence[thisLevel + 1]) {
-        sentence[thisLevel + 1].forEach((token) => {
-          if (typeof token === "string") {
-            someText.push(`${token} `);
-          } else {
-            someText.push(
-              <TranslatedText
-                token={token}
-                defLanguage={LANGUAGE_CODES[thisLangIndex].short}
-                changeLanguage="eng"
-              />
-            );
-          }
-        });
-      }
-      newText.push(someText);
-    });
+    if (thisData) {
+      thisData.forEach((sentence) => {
+        const someText = [];
+        if (sentence[thisLevel + 1]) {
+          sentence[thisLevel + 1].forEach((token) => {
+            if (typeof token === "string") {
+              someText.push(`${token} `);
+            } else {
+              someText.push(
+                <TranslatedText
+                  token={token}
+                  defLanguage={LANGUAGE_CODES[thisLangIndex].short}
+                  changeLanguage="eng"
+                />
+              );
+            }
+          });
+        }
+        newText.push(someText);
+      });
+    }
+    setApiData(thisData);
     setText(newText);
   };
 
   const handleLevelChange = (event) => {
     const thisLevel = event.target.value;
     setLevel(thisLevel);
-    updateText(thisLevel, lang);
+    updateText(apiData, thisLevel, lang);
   };
 
   const handleLangChange = (event) => {
     const thisLang = event.target.value;
     setLang(thisLang);
-    updateText(level, thisLang);
+    updateText(apiData, level, thisLang);
   };
 
   const classes = useStyles();
 
   useEffect(() => {
-    updateText(level, lang);
+    // fetchJson(setApiData).then((data) => {setApiData(data)})
+    fetch('http://127.0.0.1:8000/token', {
+      method: "POST",
+      body: JSON.stringify({
+        index: 1
+      })
+    })
+    .then(response => response.json())
+    .then(data => {updateText(data.data, level, lang);console.log(data.data)});
+
+    // console.log(apiData, " this is the current data");
+    // updateText(level, lang);
   }, []);
 
   return (
     <div className="article">
-      <div className="article_searchBar">
+      {/* <div className="article_searchBar">
         <SearchAppBar />
-      </div>
+      </div> */}
       <div className="articleComponents">
         <br></br>
         <Card className={classes.card}>
-          <CardContent>
-            <Typography className={classes.title} color="textSecondary">
-              {/* {apiInformation.type} of lang: {apiInformation.lang} */}
-            </Typography>
-            <Typography component="p">
-              {/* {text} */}
-              {text.map((element, index) => {
-                return element;
-              })}
-            </Typography>
-          </CardContent>
           <CardActions>
             <FormControl className={classes.formControl}>
               <InputLabel id="demo-simple-select-label">Level</InputLabel>
@@ -183,7 +206,10 @@ function Article() {
                   }
                 })}
               </Select>
-              <FormHelperText>Learn more about levels here.</FormHelperText>
+              <FormHelperText>
+                Learn more about levels{" "}
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a>.
+              </FormHelperText>
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel id="demo-simple-select-label">Language</InputLabel>
@@ -201,11 +227,21 @@ function Article() {
               </Select>
               <FormHelperText>
                 List of supported languages{" "}
-                <a href="https://www.reddit.com/">here</a>.
-                {/* <Link path="https://www.reddit.com/">here</Link>. */}
+                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">here</a>.
               </FormHelperText>
             </FormControl>
           </CardActions>
+          <CardContent>
+            <Typography className={classes.title} color="textSecondary">
+              {/* asdf: {apiData} */}
+            </Typography>
+            <Typography component="p">
+              {/* {text} */}
+              {text.map((element, index) => {
+                return element;
+              })}
+            </Typography>
+          </CardContent>
         </Card>
       </div>
     </div>
