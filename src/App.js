@@ -4,6 +4,7 @@ import { Route, BrowserRouter as Router ,Switch} from  "react-router-dom";
 import Home from './components/Home';
 import Article from './components/Article';
 import ArticleAnon from './components/ArticleAnon';
+import Demo from './components/demo';
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
       <Router>
           {/* <IndexRoute component = {Home} /> */}
           <Switch>
-            <Route path = "/article" exact  component = {Article} />
+            {/* <Route path = "/article" exact  component = {Article} /> */}
             <Route path = "/article/*" component = {ArticleAnon} />
+            <Route path = "/Demo/" component = {Demo} />
             <Route path = "/" exact component = {Home}/>
           </Switch>
       </Router>

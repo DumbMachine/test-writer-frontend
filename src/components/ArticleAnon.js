@@ -16,8 +16,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
-import apiData from "./test.json";
-
 import "./Article.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,14 +28,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const fetchJson = async () => {
+const fetchJson = async (index) => {
   await axios
     .post("http://127.0.0.1:8000/token", {
-      index: 1,
+      index: index,
       name: "serach the things",
     })
     .then((response) => {
-      // console.log(response.data.data)
       return response.data.data;
     })
     .catch((response) => {
@@ -47,9 +44,6 @@ const fetchJson = async () => {
 
 function TranslatedText(props) {
   const [hover, setHover] = React.useState(false);
-
-  const thisSitePointChunks = window.location.href.split("/");
-  const thisEndPoint = thisSitePointChunks[thisSitePointChunks.length - 1];
 
   return (
     <React.Fragment>
@@ -86,6 +80,11 @@ function TranslatedText(props) {
 
 function Article() {
   const [lang, setLang] = React.useState(1);
+  const thisSitePointChunks = window.location.href.split("/");
+  const thisEndPoint = Number(
+    thisSitePointChunks[thisSitePointChunks.length - 1]
+  );
+
   const [apiData, setApiData] = React.useState([]);
   const [level, setLevel] = React.useState(0);
   const [text, setText] = React.useState([]);
@@ -170,14 +169,17 @@ function Article() {
 
   useEffect(() => {
     // fetchJson(setApiData).then((data) => {setApiData(data)})
-    fetch('http://127.0.0.1:8000/token', {
+    fetch("http://127.0.0.1:8000/token", {
       method: "POST",
       body: JSON.stringify({
-        index: 1
-      })
+        index: thisEndPoint,
+      }),
     })
-    .then(response => response.json())
-    .then(data => {updateText(data.data, level, lang);console.log(data.data)});
+      .then((response) => response.json())
+      .then((data) => {
+        updateText(data.data, level, lang);
+        console.log(data.data);
+      });
 
     // console.log(apiData, " this is the current data");
     // updateText(level, lang);
