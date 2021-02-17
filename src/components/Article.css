@@ -1,6 +1,8 @@
-.article {
+.articleComponents {
   display: flex;
   flex-direction: column;
+  background-color: black;
+
   /* justify-content: center;
     align-items: center; */
 }

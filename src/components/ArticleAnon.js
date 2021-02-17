@@ -8,7 +8,8 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { FaPlayCircle } from "react-icons/fa";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import axios from "axios";
 
@@ -17,6 +18,8 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
 import "./Article.css";
+
+import apiInfo from "./Canada to Officially Open Door to Young Hong Kongers Next Week.raw.json";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -28,56 +31,88 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const fetchJson = async (index) => {
-  await axios
-    .post("http://127.0.0.1:8000/token", {
-      index: index,
-      name: "serach the things",
-    })
-    .then((response) => {
-      return response.data.data;
-    })
-    .catch((response) => {
-      console.error(response);
-    });
-};
+const THEME = createMuiTheme({
+  palette: {
+    type: "dark",
+  },
+});
+
+// const fetchJson = async (index) => {
+//   import apiInfo from "translut/src/components/Canada to Officially Open Door to Young Hong Kongers Next Week.raw.json"
+
+// await axios
+//   .post("http://127.0.0.1:8000/token", {
+//     index: index,
+//     name: "serach the things",
+//   })
+//   .then((response) => {
+//     return response.data.data;
+//   })
+//   .catch((response) => {
+//     console.error(response);
+//   });
+// };
+
+function Arrow(props) {
+  const { clickFunction } = props;
+  const icon = <FaPlayCircle />;
+
+  return <div onClick={clickFunction}>{icon}</div>;
+}
+
+{
+  /* <FaPlayCircle onClick={console.log("sex")} /> */
+}
 
 function TranslatedText(props) {
   const [hover, setHover] = React.useState(false);
 
+  // window.addEventListener("touchstart", (event) => {
+  //   setHover(true);
+  // });
+
+  // window.addEventListener("touchmove", (event) => {
+  //   setHover(true);
+  // });
+
+  // window.addEventListener("touchend", (event) => {
+  //   setHover(false);
+  // });
+
   return (
     <React.Fragment>
-      <span> </span>
-      <span
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          backgroundColor: "#A5D6A7",
-          padding: "2px",
-          borderRadius: "6px",
-        }}
-      >
-        {props.token[props.defLanguage]}
-        {hover && (
-          <React.Fragment>
-            <span
-              style={{
-                backgroundColor: "#80DEEA",
-                padding: "2px",
-                borderRadius: "6px",
-              }}
-            >
-              {" "}
-              {props.token[props.changeLanguage]}
-            </span>
-          </React.Fragment>
-        )}
-      </span>
-      <span> </span>
+      <MuiThemeProvider theme={THEME}>
+        <span> </span>
+        <span
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          style={{
+            backgroundColor: "#A5D6A7",
+            padding: "2px",
+            borderRadius: "6px",
+          }}
+        >
+          {props.token[props.defLanguage]}
+          {hover && (
+            <React.Fragment>
+              <span
+                style={{
+                  backgroundColor: "#80DEEA",
+                  padding: "2px",
+                  borderRadius: "6px",
+                }}
+              >
+                {" "}
+                {props.token[props.changeLanguage]}
+              </span>
+              {/* <FaPlayCircle onClick={console.log(props.token[props.defLanguage])}/> */}
+            </React.Fragment>
+          )}
+        </span>
+      </MuiThemeProvider>
     </React.Fragment>
   );
 }
-
 function Article() {
   const [lang, setLang] = React.useState(1);
   const thisSitePointChunks = window.location.href.split("/");
@@ -169,17 +204,19 @@ function Article() {
 
   useEffect(() => {
     // fetchJson(setApiData).then((data) => {setApiData(data)})
-    fetch("http://127.0.0.1:8000/token", {
-      method: "POST",
-      body: JSON.stringify({
-        index: thisEndPoint,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        updateText(data.data, level, lang);
-        console.log(data.data);
-      });
+    // import apiInfo from "translut/src/components/Canada to Officially Open Door to Young Hong Kongers Next Week.raw.json"
+    // fetch("http://127.0.0.1:8000/token", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     index: thisEndPoint,
+    //   }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     updateText(data.data, level, lang);
+    //     console.log(data.data);
+    //   });
+    updateText(apiInfo, level, lang);
 
     // console.log(apiData, " this is the current data");
     // updateText(level, lang);
